@@ -1,0 +1,7 @@
+.vscode/
+
+# 可执行文件
+bin/
+main
+qian
+a.out
