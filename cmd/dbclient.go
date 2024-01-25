@@ -6,8 +6,14 @@ import (
 	SQL "qianDev/consts"
 )
 
+// 非root权限连接 sql需要密码
 func QianDBA(sql string) string {
+	out, _ := exec.Command("bash", "-c", "whoami").Output()
+	if string(out[:len(out)-1]) != "root" {
+		return fmt.Sprintf("mysql -u asterisk -plike2024 -e \"%s\" ", sql)
+	}
 	return fmt.Sprintf("mysql -e \"%s\" ", sql)
+
 }
 
 /**
