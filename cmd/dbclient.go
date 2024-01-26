@@ -48,8 +48,13 @@ func CreateEndPoint() {
 
 	// 检测是否已经有该设备
 	if exist := Check_Endpoint(endpoint); !exist {
-		id, aors, auth := endpoint, endpoint, endpoint
-		cmd := fmt.Sprintf(QianDBA(SQL.E[3]), id, "transport-udp", aors, auth, "sets", "all", "ulaw", "no")
+		id, aors, auth, context := endpoint, endpoint, endpoint, ""
+		fmt.Print("上下文(默认 sets): ")
+		fmt.Scanln(&context)
+		if len(context) == 0 {
+			context = "sets"
+		}
+		cmd := fmt.Sprintf(QianDBA(SQL.E[3]), id, "transport-udp", aors, auth, context, "all", "ulaw", "no")
 		_, err := exec.Command("bash", "-c", cmd).Output()
 		if err != nil {
 			fmt.Println("创建分机失败")
@@ -78,8 +83,13 @@ func CreateExtension(endpoint string) {
 
 	// 检测是否已经有该设备
 	if exist := Check_Endpoint(endpoint); !exist {
-		id, aors, auth := endpoint, endpoint, endpoint
-		cmd := fmt.Sprintf(QianDBA(SQL.E[3]), id, "transport-udp", aors, auth, "sets", "all", "ulaw", "no")
+		id, aors, auth, context := endpoint, endpoint, endpoint, ""
+		fmt.Print("上下文(默认 sets): ")
+		fmt.Scanln(&context)
+		if len(context) == 0 {
+			context = "sets"
+		}
+		cmd := fmt.Sprintf(QianDBA(SQL.E[3]), id, "transport-udp", aors, auth, context, "all", "ulaw", "no")
 		_, err := exec.Command("bash", "-c", cmd).Output()
 		if err != nil {
 			fmt.Println("创建分机失败")
