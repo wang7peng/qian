@@ -99,6 +99,23 @@ func CreateExtension(endpoint string) {
 	}
 }
 
+// 功能: 根据提供的分机号删除对应的记录
+func DeleteExtension(endpoint string) {
+
+	if !Check_Aors(endpoint) || !Check_Auths(endpoint) {
+		fmt.Println("无需删除, 系统没有该分机 " + endpoint)
+		return
+	}
+
+	cmd := fmt.Sprintf(SQL.E[201]+SQL.E[202]+SQL.E[203], endpoint, endpoint, endpoint)
+	_, err := exec.Command("bash", "-c", QianDBA(cmd)).Output()
+	if err != nil {
+		fmt.Printf("删除分机 %s 失败", endpoint)
+		return
+	}
+	fmt.Println("分机 " + endpoint + " 已经删除!")
+}
+
 // 功能: 检测是否存在记录地址
 func Check_Aors(id string) bool {
 	cmd := fmt.Sprintf(QianDBA(SQL.E[101])+"|sed -n '2p' ", id)

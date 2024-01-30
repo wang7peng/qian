@@ -16,6 +16,7 @@ func Usage() {
 	fmt.Println("  -v         \t 查看当前版本")
 	fmt.Println("  -c         \t 新建PJSIP话机终端")
 	fmt.Println("  -c [name]")
+	fmt.Println("  -d num     \t 删除PJSIP话机")
 	fmt.Println("  -p [page]  \t 提供书页, 运行对应页的案例")
 	fmt.Println("  -h         \t 使用帮助")
 	fmt.Println("")
@@ -42,6 +43,14 @@ func main() {
 			CreateExtension(os.Args[2])
 		} else {
 			CreateEndPoint()
+		}
+
+	case "--delete", "-d":
+		// 删除分机
+		if len(os.Args) > 2 {
+			DeleteExtension(os.Args[2])
+		} else {
+			Usage()
 		}
 
 	case "--page", "page", "-p", "-P":
