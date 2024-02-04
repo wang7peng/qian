@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 	SQL "qianDev/consts"
+	ConfFile "qianDev/dialplan"
 )
 
 // 非root权限连接 sql需要密码
@@ -61,6 +62,8 @@ func CreateEndPoint() {
 			return
 		}
 
+		// 在配置 extension.conf 中定义一个提示
+		ConfFile.Insert_Hint(context, endpoint, "/etc/asterisk/extensions.conf")
 	}
 }
 
@@ -95,6 +98,9 @@ func CreateExtension(endpoint string) {
 			fmt.Println("创建分机失败")
 			return
 		}
+
+		// 在配置 extension.conf 中定义一个提示
+		ConfFile.Insert_Hint(context, endpoint, "/etc/asterisk/extensions.conf")
 		fmt.Println("分机 " + endpoint + " 创建完成!")
 	}
 }
