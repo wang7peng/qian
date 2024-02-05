@@ -1,4 +1,4 @@
-package main
+package app_small
 
 import (
 	"fmt"
@@ -28,7 +28,7 @@ func CreateEndPoint() {
 	fmt.Scanln(&endpoint)
 
 	if len(endpoint) == 0 {
-		fmt.Println("输入不行")
+		fmt.Println("no Ext Number specified!")
 		Usage()
 		return
 	}
