@@ -38,6 +38,14 @@ func main() {
 			F.ShowWarn()
 		}
 
+	case "--rule", "-r":
+		// 控制话机之间的沟通关系
+		if len(os.Args) > 2 {
+			F.ObeyRule()
+		} else {
+			F.ShowWarn()
+		}
+
 	default:
 		F.Usage()
 	}

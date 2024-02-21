@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	Demo "qianDev/guidebook"
+	L "qianDev/internal/app_big"
 	F "qianDev/internal/app_small"
 )
 
@@ -20,6 +21,8 @@ func Usage() {
 	fmt.Println("  -c         \t 新建PJSIP话机终端")
 	fmt.Println("  -c [name]")
 	fmt.Println("  -d num     \t 删除PJSIP话机")
+	fmt.Println("  -r         \t 控制话机沟通能力")
+	fmt.Println("  -r '?---?' \t 同上, 通过形象串控制")
 	fmt.Println("  -p [page]  \t 提供书页, 运行对应页的案例")
 	fmt.Println("  -h         \t 使用帮助")
 	fmt.Println("")
@@ -54,6 +57,19 @@ func main() {
 		// 删除分机
 		if len(os.Args) > 2 {
 			F.DeleteExtension(os.Args[2])
+		} else {
+			ShowWarn()
+		}
+
+	case "--rule", "-r":
+		// 控制话机之间的沟通关系
+		if len(os.Args) == 2 {
+			L.QA2ObeyRule()
+			return
+		}
+
+		if len(os.Args) > 2 && len(os.Args[2]) > 7 {
+			F.ObeyRule()
 		} else {
 			ShowWarn()
 		}

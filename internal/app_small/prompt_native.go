@@ -11,6 +11,10 @@ func Usage() {
 	fmt.Println("  -v         \t 查看当前版本")
 	fmt.Println("  -c num     \t 新建PJSIP话机")
 	fmt.Println("  -d num     \t 删除PJSIP话机")
+	fmt.Println("  -r '?'     \t 控制话机沟通能力")
+	fmt.Println("             \t  A ----> B  \t A 能通 B 但 B 不一定通 A")
+	fmt.Println("             \t  A ----- B  \t A B 能互打")
+	fmt.Println("             \t  A --x-- B  \t A B 不能打")
 	fmt.Println("  -h         \t 使用帮助")
 	fmt.Println("")
 }
