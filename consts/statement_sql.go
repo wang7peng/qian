@@ -15,6 +15,9 @@ var E = map[int]string{
 	105: "SELECT id,auth_type,password,username FROM asterisk.ps_auths;",
 	106: "SELECT id,transport,aors,auth,context,disallow,allow FROM asterisk.ps_endpoints;",
 
+	//查找数据单元
+	111: "SELECT context FROM asterisk.ps_endpoints WHERE id=%s;",
+
 	// 删除
 	201: "DELETE FROM asterisk.ps_aors WHERE id='%s' ;",
 	202: "DELETE FROM asterisk.ps_auths WHERE id='%s' ;",

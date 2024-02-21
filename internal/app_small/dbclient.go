@@ -17,6 +17,15 @@ func QianDBA(sql string) string {
 
 }
 
+// 便捷的数据显示, 用来显示列, 直接去头, 省去 bash 中管道接 head
+func QianDBA_Unit(sql string) string {
+	out, _ := exec.Command("bash", "-c", "whoami").Output()
+	if string(out[:len(out)-1]) != "root" {
+		return fmt.Sprintf("mysql -u asterisk -plike2024 -Ne \"%s\" ", sql)
+	}
+	return fmt.Sprintf("mysql -Ne \"%s\" ", sql)
+}
+
 /**
  * 功能: 创建话机终端, [1] P48
  *
@@ -120,6 +129,16 @@ func DeleteExtension(endpoint string) {
 		return
 	}
 	fmt.Println("分机 " + endpoint + " 已经删除!")
+}
+
+// 功能: 通过单个分机名字获取其上下文
+func GetContext(id string) string {
+	cmd := fmt.Sprintf(QianDBA_Unit(SQL.E[111]), id)
+	out, _ := exec.Command("bash", "-c", cmd).Output()
+	if len(out) == 0 {
+		return ""
+	}
+	return string(out[:len(out)-1])
 }
 
 // 功能: 检测是否存在记录地址
