@@ -36,8 +36,11 @@ func getLineInFile(row int, file string) string {
 	return valueStr
 }
 
-// 执行 sed -n 获取文件指定两个行区间的内容
-// e.g sed -n '20, 30p' /etc/.../extensions.conf
+/*
+功能: 执行 sed -n 获取文件指定两个行区间的内容
+
+	e.g sed -n '20, 30p' /etc/.../extensions.conf
+*/
 func getLinesInRowRange(rowStart, rowEnd int, file string) string {
 	cmd := fmt.Sprintf("sed -n '%d, %dp' %s", rowStart, rowEnd, file)
 	out, err := exec.Command("bash", "-c", cmd).Output()
@@ -52,8 +55,11 @@ func getLinesInRowRange(rowStart, rowEnd int, file string) string {
 	return valueStr
 }
 
-// 执行 sed -i 插入单行内容到文件指定行
-// e.g sed -i 'ni\xxx' /etc/xxx/extensions.conf
+/*
+功能: 执行 sed -i 插入单行内容到文件指定行
+
+	e.g sed -i 'ni\xxx' /etc/xxx/extensions.conf
+*/
 func InsertLineToFile(n int, row, file string) error {
 	cmd := fmt.Sprintf("sudo sed -i '%di\\%s' %s ", n, row, file)
 
@@ -71,8 +77,8 @@ func checkStringInText(text, sonStr string) bool {
 	if err != nil {
 		return false
 	}
+
 	valueStr := string(out[:len(out)-1])
-	fmt.Println(valueStr)
 	count, _ := strconv.Atoi(valueStr)
 
 	return count > 0

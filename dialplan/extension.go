@@ -16,6 +16,13 @@ type ObjContext struct {
 	name string
 }
 
+func RowStatement_Dial(id string, timeout int) string {
+	// e.g exten => id,1,Dial(PJSIP/id)
+	// e.g exten => id,1,Dial(PJSIP/id,30)
+	return fmt.Sprintf("exten => %s,1,Dial(PJSIP/%s, %d)",
+		id, id, timeout)
+}
+
 func RowStatement_Hint(id string) string {
 	// e.g exten => id,hint,PJSIP/id&Custom:DNDid,CustomPresence:id
 	return fmt.Sprintf("exten => %s,hint,PJSIP/%s&Custom:DND%s,CustomPresence:%s",
@@ -71,6 +78,66 @@ func Insert_Hint(context, endpoint, filepath_conf string) {
 		fmt.Printf("在 extensions.conf 的 %d 行插入hint成功! \n", lineInsert)
 	}
 
+}
+
+/*
+功能: 在 extension.conf 中写定义一个能打通分机的连接
+
+  - A ----> B 在A的上下文中连接B
+*/
+func Insert_Dial(context, endpoint string, timeout int, filepath_conf string) {
+	contextInConf := "[" + context + "]"
+	contextArr, rows := getContext(filepath_conf), getFileHeight(filepath_conf)
+
+	// 优先考虑末尾, 可能需要找的上下文就在末尾
+	objLast := contextArr[len(contextArr)-1]
+	if objLast.name == contextInConf {
+		fmt.Printf("在行区间 [%d, %d] 插入... ", objLast.line+1, rows)
+		// sed -n 'a, bp' xxx.conf | grep xxx
+		content := getLinesInRowRange(objLast.line+1, rows, filepath_conf)
+
+		/*
+			[context]
+			exten => id,1,Dial(PJSIP/id,30)
+		*/
+		if !checkStringInText(content, endpoint+",1,Dial") {
+			rowNumber, content := objLast.line+1, RowStatement_Dial(endpoint, 30)
+			err := InsertLineToFile(rowNumber, content, filepath_conf)
+			if err != nil {
+				fmt.Println("插入失败: ", err.Error())
+			} else {
+				fmt.Println("ok")
+			}
+		}
+		return
+	}
+
+	i := 0
+	for ; i < len(contextArr); i++ {
+		if contextArr[i].name == contextInConf {
+			objCurr, objNext := contextArr[i], contextArr[i+1]
+			fmt.Printf("在行区间 [%d, %d] 插入... ", objCurr.line+1, objNext.line-1)
+
+			//  sed -n 'a, bp' xxx.conf | grep xxx
+			content := getLinesInRowRange(objCurr.line+1, objNext.line-1, filepath_conf)
+			if !checkStringInText(content, endpoint+",1,Dial") {
+				rowNumber, content := objCurr.line+1, RowStatement_Dial(endpoint, 30)
+				err := InsertLineToFile(rowNumber, content, filepath_conf)
+				if err != nil {
+					fmt.Println("插入失败: ", err.Error())
+				} else {
+					fmt.Println("ok")
+				}
+			}
+
+			break // 只找第一个
+		}
+	}
+
+	if i == len(contextArr) {
+		fmt.Println("分机未通过写 dialplan 方式实现, 此路不通...")
+		return
+	}
 }
 
 // 获取配置文件的总行数
