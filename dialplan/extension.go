@@ -76,6 +76,27 @@ func Insert_Hint(context, endpoint, filepath_conf string) {
 
 }
 
+// 获取配置文件的总行数
+func getFileHeight(file string) int {
+	fi, err := os.Open(file)
+	if err != nil {
+		fmt.Println("Error: ", err.Error())
+		return -1
+	}
+	defer fi.Close()
+
+	fd := bufio.NewReader(fi)
+	count := 0
+	for {
+		_, err := fd.ReadString('\n')
+		if err != nil {
+			break
+		}
+		count++
+	}
+	return count
+}
+
 // 所有 [ 起头的行
 func getContext(file string) []ObjContext {
 	contextArr := make([]ObjContext, 0)
