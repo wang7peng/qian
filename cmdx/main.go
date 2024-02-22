@@ -69,7 +69,7 @@ func main() {
 		}
 
 		if len(os.Args) > 2 && len(os.Args[2]) > 7 {
-			F.ObeyRule()
+			F.ObeyRule(os.Args[2])
 		} else {
 			ShowWarn()
 		}
