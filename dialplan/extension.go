@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -62,10 +61,8 @@ func Insert_Hint(context, endpoint, filepath_conf string) {
 		lineInsert := contextArr[pos+1].line
 
 		content := RowStatement_Hint(endpoint)
-		// sed -n 'ni\xxx' /a/b.conf
-		cmd := fmt.Sprintf("sudo sed -i '%di\\%s' %s ", lineInsert, content, filepath_conf)
 
-		_, err := exec.Command("bash", "-c", cmd).Output()
+		err := InsertLineToFile(lineInsert, content, filepath_conf)
 		if err != nil {
 			fmt.Println("插入失败")
 			return
