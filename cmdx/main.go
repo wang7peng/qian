@@ -48,7 +48,7 @@ func main() {
 	case "--create", "-c":
 		// 创建分机
 		if len(os.Args) > 2 {
-			F.CreateExtension(os.Args[2])
+			F.CreateExtension(os.Args[2:])
 		} else {
 			F.CreateEndPoint()
 		}

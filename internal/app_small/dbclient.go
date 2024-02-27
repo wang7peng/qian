@@ -76,8 +76,15 @@ func CreateEndPoint() {
 	}
 }
 
-func CreateExtension(endpoint string) {
+/*
+功能: 命令行创建分机, 一行创建
+
+  - app -c 2024
+  - app -c 2024 like2024 qian-ctx
+*/
+func CreateExtension(params []string) {
 	// 三张表确定一个分机
+	endpoint, password, context := params[0], "", ""
 
 	if exist := Check_Aors(endpoint); !exist {
 		cmd := fmt.Sprintf(QianDBA(SQL.E[1]), endpoint, 1)
@@ -85,9 +92,14 @@ func CreateExtension(endpoint string) {
 	}
 
 	if exist := Check_Auths(endpoint); !exist {
-		fmt.Print("密码: ")
-		password := ""
-		fmt.Scanln(&password)
+
+		if len(params) > 1 {
+			password = params[1]
+		} else {
+			fmt.Print("设置密码: ")
+			fmt.Scanln(&password)
+		}
+
 		id := endpoint
 		cmd := fmt.Sprintf(QianDBA(SQL.E[2]), id, "userpass", password, endpoint)
 		exec.Command("bash", "-c", cmd).Output()
@@ -95,12 +107,17 @@ func CreateExtension(endpoint string) {
 
 	// 检测是否已经有该设备
 	if exist := Check_Endpoint(endpoint); !exist {
-		id, aors, auth, context := endpoint, endpoint, endpoint, ""
-		fmt.Print("上下文(默认 sets): ")
-		fmt.Scanln(&context)
+		id, aors, auth := endpoint, endpoint, endpoint
+		if len(params) > 2 {
+			context = params[2]
+		} else {
+			fmt.Print("上下文(默认 sets): ")
+			fmt.Scanln(&context)
+		}
 		if len(context) == 0 {
 			context = "sets"
 		}
+
 		cmd := fmt.Sprintf(QianDBA(SQL.E[3]), id, "transport-udp", aors, auth, context, "all", "ulaw", "no")
 		_, err := exec.Command("bash", "-c", cmd).Output()
 		if err != nil {
@@ -163,6 +180,6 @@ func Check_Endpoint(endpoint string) bool {
 	cmd := fmt.Sprintf(QianDBA(SQL.E[103])+"|sed -n '2p' ", endpoint)
 	out, _ := exec.Command("bash", "-c", cmd).Output()
 	out = out[:len(out)-1]
-	fmt.Println(string(out))
+	// 查到数据返回 1, 不存在返回 0
 	return (string(out) == "1")
 }
