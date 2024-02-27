@@ -4,6 +4,7 @@ package dialplan
 
 import (
 	"os/exec"
+	"strings"
 
 	"fmt"
 	"strconv"
@@ -19,6 +20,34 @@ func getFileRows(file string) int {
 	valueStr := string(out[:len(out)-1])
 	count, _ := strconv.Atoi(valueStr)
 	return count
+}
+
+/*
+功能: 执行 grep -n | cut 查询指定行的行号数组
+
+	e.g grep -in 'xxx,hint' /etc/.../extensions.conf | cut -d':' -f1
+*/
+func getRowsNum(rowStr, file string) []int {
+	cmd := fmt.Sprintf("grep -i --line-number %s %s | cut -d':' -f1",
+		rowStr, file)
+
+	numArr := make([]int, 0)
+	out, err := exec.Command("bash", "-c", cmd).Output()
+	if err != nil {
+		return []int{0}
+	}
+	if len(out) == 0 {
+		return []int{0}
+	}
+
+	out = out[:len(out)-1]
+	outs := strings.Split(string(out), "\n")
+	for _, content := range outs {
+		num, _ := strconv.Atoi(content)
+		numArr = append(numArr, num)
+	}
+
+	return numArr
 }
 
 // 执行 sed -n 获取文件指定行的内容

@@ -122,6 +122,9 @@ func DeleteExtension(endpoint string) {
 		return
 	}
 
+	// 删除配置文件中与分机相配的 endpoint,hint,xxx 一行
+	ConfFile.Delete_Hint(endpoint, "/etc/asterisk/extensions.conf")
+
 	cmd := fmt.Sprintf(SQL.E[201]+SQL.E[202]+SQL.E[203], endpoint, endpoint, endpoint)
 	_, err := exec.Command("bash", "-c", QianDBA(cmd)).Output()
 	if err != nil {

@@ -81,7 +81,27 @@ func Insert_Hint(context, endpoint, filepath_conf string) {
 }
 
 /*
-功能: 在 extension.conf 中写定义一个能打通分机的连接
+功能: 在 extensions.conf 中代表指定分机提示的一行去除
+
+  - 不需要找要删除的分机的context, 每个分机的 hint 语句有且只有一行
+*/
+func Delete_Hint(endpoint, filepath_conf string) {
+
+	numArr := getRowsNum(endpoint+",hint", filepath_conf)
+	if numArr[0] == 0 {
+		return // 没有找到无需删除
+	}
+
+	// 只管 numArr[0] , 就是要删除的数据
+	// numArr 其他不管, 因为删除后, 文本后部分都上提一行, 和实际已经对不上了
+	err := deleteLineInFile(numArr[0], filepath_conf)
+	if err != nil {
+		fmt.Println("删除失败: ", err.Error())
+	}
+}
+
+/*
+功能: 在 extensions.conf 中指定的上下文里定义一个能打通分机的连接
 
   - A ----> B 在A的上下文中连接B
 */
@@ -198,4 +218,24 @@ func appendToFile(absPath, str string) {
 	}
 
 	fmt.Printf("在 %s 的末尾插入hint成功! \n", filepath.Base(absPath))
+}
+
+func deleteLineInFile(row int, file string) error {
+	f, err := os.ReadFile(file)
+	if err != nil {
+		return err
+	}
+
+	lines := strings.Split(string(f), "\n")
+
+	// 创建一个新的内容，不包含要删除的行
+	var newContent []string
+	for i, line := range lines {
+		if i != row-1 { // 行号减1是因为slice的索引是从0开始的
+			newContent = append(newContent, line)
+		}
+	}
+
+	// 将新的内容写回文件
+	return os.WriteFile(file, []byte(strings.Join(newContent, "\n")), 0644)
 }
